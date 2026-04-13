@@ -1,0 +1,476 @@
+{
+  "name": "Email Drafter",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const name = String($json['Name'] ?? $json['NAME'] ?? $json['name'] ?? '').trim();\nconst emailSubject = `Partnership Opportunity: Polish Party x ${name}`;\n\nconst greetingName = name ? `${name} ` : '';\nconst emailBody = [\n  `Hi ${greetingName}team,`,\n  '',\n  'I’m Jordie, a textile and nail artist based in LA. The way you’ve cultivated a space that centers healing, culture, and joy especially for queer and BIPOC communities feels deeply aligned with the work I do.',\n  '',\n  'I’d love to bring The Polish Party to your community, a hands-on nail art workshop where folks of all genders are invited to slow down, get creative, and design their own press-on nail sets using gel polish, charms, stickers, and more. It’s a joyful, affirming space where self-expression and play are centered. I offer a short demo, then invite guests to freestyle or pull from themed inspo cards. We close with a little gallery walk, and everyone leaves with a set they created and can carry out into the world.',\n  '',\n  \"This is a new offering but it has been a hit at Aura Creative Co in Lincoln Heights, with upcoming sessions at Nova Community Arts and Junior High LA. I provide all materials and tools, it's beginner friendly and no nail art experience needed.\",\n  '',\n  'If this feels like a good fit for your public programming, I’d love to connect and explore partnership further.',\n].join('\\n');\n\nreturn [\n  {\n    json: {\n      ...$json,\n      'Email Subject': emailSubject,\n      'Email Body': emailBody,\n    },\n  },\n];"
+      },
+      "id": "20845024-988e-47d9-9946-e04710cc1c60",
+      "name": "Build Email Template1",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2096,
+        2224
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0a75bda6-d9ca-4647-a509-ea044537208d",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        1648,
+        2304
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {},
+      "id": "0fbc6d87-b649-437f-93f1-3eef8b4b0af6",
+      "name": "Limit",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        1424,
+        2304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "8dc5b028-6f5d-4d76-8852-99180bfb4591",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json['Email Address '] }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "16e46eb8-b392-4267-ab22-1c4eba93933a",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1872,
+        2224
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1vKYUGhNuQl8gaarCMY2mP6FzbWQWkdfIU8z8wAKOj7E",
+          "mode": "list",
+          "cachedResultName": "Copy of Bulk Email Drafter",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vKYUGhNuQl8gaarCMY2mP6FzbWQWkdfIU8z8wAKOj7E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TjXelyGPg5G8lbPDI9_XOReTzmU1o52z2R3v8dYaoQM/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email Address "
+          ],
+          "value": {
+            "Message Id": "={{ $json.id }}",
+            "Email Address ": "={{ $('Get Emails').item.json['Email Address '] }}",
+            "Email Subject": "={{ $('Build Email Template1').first().json['Email Subject'] }}",
+            "Email Body": "={{ $('Build Email Template1').first().json['Email Body'] }}",
+            "Drafted on": "={{ $now }}",
+            "Email Drafted ": "=Yes",
+            "Name": "={{ $('Get Emails').item.json.Name }}"
+          },
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address ",
+              "displayName": "Email Address ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sender Email",
+              "displayName": "Sender Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Subject",
+              "displayName": "Email Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Body",
+              "displayName": "Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Drafted ",
+              "displayName": "Email Drafted ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Drafted on",
+              "displayName": "Drafted on",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message Id",
+              "displayName": "Message Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "43ed575c-0e36-4ff7-ba5b-392e708be7ac",
+      "name": "Update Records",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        2544,
+        2224
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gkXqjUAoX0mEwkD2",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vKYUGhNuQl8gaarCMY2mP6FzbWQWkdfIU8z8wAKOj7E",
+          "mode": "list",
+          "cachedResultName": "Copy of Bulk Email Drafter",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vKYUGhNuQl8gaarCMY2mP6FzbWQWkdfIU8z8wAKOj7E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "d1ef5472-1ed4-4a1c-ab72-f814dc910de8",
+      "name": "Get Emails",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1200,
+        2304
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gkXqjUAoX0mEwkD2",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "c4dabe87-dd77-42ae-819a-5b83bfa76225",
+      "name": "Set Timer",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        976,
+        2304
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "92ccbc00-c2db-4c21-a723-2cd4954db0df",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        2768,
+        2304
+      ],
+      "webhookId": "c4cf719a-d47f-4761-8a16-aff92b8e9a19",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $json['Sender email '] }}",
+        "toEmail": "={{ $json['Email Address '] }}",
+        "subject": "={{ $json['Email subject'] }}",
+        "emailFormat": "text",
+        "text": "={{ $json['Email body'] }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e58c210a-4037-4aae-adac-ec90b92fe243",
+      "name": "connect",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [
+        1280,
+        2048
+      ],
+      "webhookId": "49772db0-f2ab-4f5a-9b20-5b4f097f301c",
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "content": "# Email Drafter",
+        "height": 620,
+        "width": 1660
+      },
+      "id": "7ecdf2b0-ce87-43f7-9468-0bcda6fac667",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1104,
+        1840
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 1. Setup Guide\n*  ### Configure the timer node to your desired execution frequency.\n* ### Duplicate the provided [Google Sheet Template](https://docs.google.com/spreadsheets/d/145fry3jHIP0kxOamDTl0ROb2o9hr27wALa4Sw80t9qo/edit?usp=sharing).\n* ### Link the duplicated sheet within both the \"Get Emails\" and \"Update Record\" nodes.\n* ### Select your preferred email sending node and use the \"Limit\" node to manage the volume of emails dispatched.\n\n## 2. Help\n* ### For detailed instructions, please refer to our [Detailed Setup Guide](https://docs.google.com/document/d/1vVJW97H0rXs5RJ0EBcfdpHM39eGA88wr9yT-lDd0rr4/edit?usp=sharing).",
+        "height": 620,
+        "width": 300
+      },
+      "id": "12110b79-e554-4bca-a5e6-57d6c8ccff70",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        1840
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Utilize this node for non-Google email services.",
+        "height": 260,
+        "width": 320,
+        "color": 3
+      },
+      "id": "344c08c7-bfbd-433e-ac9c-7b762cd91450",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1168,
+        1952
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json['Email Subject'] }}",
+        "message": "={{ $json['Email Body'] }}",
+        "options": {
+          "sendTo": "={{ $json['Email Address '] }}"
+        }
+      },
+      "id": "7b67c458-9f6d-4598-8a25-760a793c066b",
+      "name": "Draft Email",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        2320,
+        2224
+      ],
+      "webhookId": "2add08f1-0af8-4951-af47-721d2c4302ec",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "id52ERbUtAQEFG1H",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Build Email Template1": {
+      "main": [
+        [
+          {
+            "node": "Draft Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Build Email Template1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Records": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Timer": {
+      "main": [
+        [
+          {
+            "node": "Get Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Email": {
+      "main": [
+        [
+          {
+            "node": "Update Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6fed1895-9f0a-4ccd-a341-17aaad099d01",
+  "meta": {
+    "instanceId": "689f64c59c0ac5a2e44f563529d1d55af31e8cf3241be89f4f169ec5af73e2ba"
+  },
+  "id": "L5B5p1ArvlhwKhXj",
+  "tags": []
+}
